@@ -5,7 +5,14 @@ class Controller():
     def __init__(self, client):
         self.client = client
         self.controller = ChannelManager.ChannelManager(client)
-    async def onCheckVoiceState(self, member, before, after):
+    async def onCheckVoiceState(self, member, before : discord.VoiceState, after : discord.VoiceState):
+
+        
+        try:
+            if after.channel == before.channel:
+                return
+        except:
+            print(member + " did not change channel")
         if after is not None:
             try:
                 await self.controller.checkJoinChannel(member, after.channel)
