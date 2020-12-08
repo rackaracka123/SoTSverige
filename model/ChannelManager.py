@@ -26,6 +26,7 @@ class ChannelManager():
     def isChannelDeletable(self, channel : discord.VoiceChannel):
         return (channel.name.startswith(boatTypes[2]) or channel.name.startswith(boatTypes[3]) or channel.name.startswith(boatTypes[4])) and len(channel.members) == 0
     async def tryDeleteChannel(self, channel : discord.VoiceChannel):
+        channel = await self.client.fetch_channel(channel.id)
         if self.isChannelDeletable(channel):
             await channel.delete()
     async def sortChannels(self, category : discord.CategoryChannel):
