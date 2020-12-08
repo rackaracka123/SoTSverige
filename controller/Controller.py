@@ -17,8 +17,6 @@ class Controller():
             except:
                 print("Wrong in channel (before)")
         try:
-            await self.controller.tryDeleteChannel(before.channel)
             await self.controller.sortChannels(before.channel.category)
         except:
-            await self.controller.tryDeleteChannel(after.channel)
             await self.controller.sortChannels(after.channel.category)
