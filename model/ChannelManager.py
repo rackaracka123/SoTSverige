@@ -29,6 +29,8 @@ class ChannelManager():
         channel = await self.client.fetch_channel(channel.id)
         if self.isChannelDeletable(channel):
             await channel.delete()
+            return True
+        return False
     async def sortChannels(self, category : discord.CategoryChannel):
         if "spelare" in category.name.lower():
             counter = 1
