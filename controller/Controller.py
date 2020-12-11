@@ -34,4 +34,3 @@ class Controller():
                 await self.controller.sortChannels(before.channel.category)
             except:
                 await self.controller.sortChannels(after.channel.category)
-            

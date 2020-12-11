@@ -9,7 +9,7 @@ async def on_ready():
 
 @client.event
 async def on_voice_state_update(member, before, after):
-    await controller.onCheckVoiceState(member, before, after)
+    print("Voice state is not enabled")
 
 @client.event
 async def on_message(message):
