@@ -19,7 +19,6 @@ async def on_raw_reaction_add(reaction):
 async def on_raw_reaction_remove(reaction):
     await controller.onReactRemove(reaction)
 
-
 @client.event
 async def on_message(message):
     if message.author == client.user:

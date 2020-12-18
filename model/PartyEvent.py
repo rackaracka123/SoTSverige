@@ -13,6 +13,8 @@ class PartyEvent():
         self.templateChannel = discord.utils.get(guild.channels, name="party-pirate-template")
     def setMax(self, nrMax):
         self.maxPlayers = nrMax
+    def setLeaders(self, leaders):
+        self.leaders = leaders
     async def purgeEventChannel(self):
         await self.eventChannel.purge()
     def distance(self, x, y):
@@ -28,7 +30,10 @@ class PartyEvent():
     async def sendInfoMessage(self, saturday):
         saturday = format_datetime(saturday, format="EEEE d MMMM Y", locale='sv_SE')
         template = await self.getTemplate()
-        return await self.infoChannel.send(template.content.format(tid=saturday, queue="<#" + str(self.eventChannel.id) + ">"))
+        leadersStr = ""
+        for x in self.leaders:
+            leadersStr +="<@" + str(x) + "> "
+        return await self.infoChannel.send(template.content.format(tid=saturday, queue="<#" + str(self.eventChannel.id) + ">", leaders=leadersStr))
     async def reactToEventMessage(self):
         message = await self.getQueueMsg()
         try:
@@ -57,12 +62,13 @@ class PartyEvent():
         
         
         embed.title="Event kö (Antalet personer: " + str(len(embed.fields) + 1) + "/" + str(self.maxPlayers) + ")"
+        embed.add_field(name= str(len(embed.fields) + 1) + " " + member.name + "#" + member.discriminator , value="-"*2*len(member.name), inline=False)
       
         if len(embed.fields) >= self.maxPlayers - 1:
-            embed.add_field(name= str(len(queueMsg.embeds[0].fields)) + " " + member.name , value="-"*2*len(member.name), inline=False)
             embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
         else:
-            embed.add_field(name= str(len(queueMsg.embeds[0].fields) + 1) + " " + member.name , value="-"*2*len(member.name), inline=False)
+            print("")
+            #embed.add_field(name= str(len(queueMsg.embeds[0].fields) + 1) + " " + member.name , value="-"*2*len(member.name), inline=False)
 
         embed.set_footer(text="Bot skapad av: @rackaracka#6651")
         await queueMsg.edit(embed=embed)
@@ -76,7 +82,7 @@ class PartyEvent():
             counter+=1
             name = x.name[len(str(counter)) + 1:]
 
-            if "Event" in name or name == user.name:
+            if "Event" in name or name == user.name + "#" + user.discriminator:
                 counter-=1
                 continue
             else:

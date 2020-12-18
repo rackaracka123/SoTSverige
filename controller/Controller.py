@@ -6,20 +6,25 @@ class Controller():
         self.client = client
         self.partyEvent = PartyEvent.PartyEvent(client, 2)
     async def onCheckMessage(self, message, syntax):
-        if message.content.lower().startswith(syntax + "event") and len(message.content.split(" ")) == 2:
+        try:
+            if message.content.lower().startswith(syntax + "event") and len(message.raw_mentions) != 0:
             
-            self.partyEvent.setMax(int(message.content.split(" ")[1]))
-            
-            self.partyEvent.initGuild(message.guild)
-            await self.partyEvent.eventChannel.send("Purging...")
-            await self.partyEvent.purgeEventChannel()
+                self.partyEvent.setMax(int(message.content.split(" ")[1]))
+                self.partyEvent.setLeaders(message.raw_mentions)
 
-            await self.partyEvent.sendInfoMessage(self.partyEvent.getNextSaturday())
+                self.partyEvent.initGuild(message.guild)
+                await self.partyEvent.eventChannel.send("Purging...")
+                await self.partyEvent.purgeEventChannel()
 
-            await self.partyEvent.createQueueMessage()
+                await self.partyEvent.sendInfoMessage(self.partyEvent.getNextSaturday())
 
-            await self.partyEvent.reactToEventMessage()
+                await self.partyEvent.createQueueMessage()
 
+                await self.partyEvent.reactToEventMessage()
+            elif "event" in message.content.lower():
+                await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
+        except:
+            await message.channel.send("**Fel argument i kommandot***\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
     async def onReactAdd(self, reaction : discord.RawReactionActionEvent):
         channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
         message = discord.message
