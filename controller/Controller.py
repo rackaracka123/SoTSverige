@@ -1,36 +1,41 @@
 import discord
-from model import ChannelManager
+from model import PartyEvent
 
 class Controller():
     def __init__(self, client : discord.client):
         self.client = client
-        self.controller = ChannelManager.ChannelManager(client)
-    async def onCheckVoiceState(self, member, before : discord.VoiceState, after : discord.VoiceState):        
-        try:
-            if after.channel == before.channel:
-                return
-        except:
-            print(member.name + " did not change channel")
-        if after is not None:
-            if after.channel is not None:
-                ch = await self.client.fetch_channel(after.channel.id)
-                try:
-                    await self.controller.checkJoinChannel(member, ch)
-                    print(member.name + " joined " + ch)
-                except:
-                    print(member.name + " moved to a channel i cant see")
-        if before is not None:
-            if before.channel is not None:
-                ch = await self.client.fetch_channel(before.channel.id)
-                try:
-                    deleted = await self.controller.tryDeleteChannel(ch)
-                    if deleted:
-                        print(member.name + " left " + ch.name + " (" + str(len(ch.members)) + "/" + str(ch.user_limit) + ") -> deleting it.")
-                    else:
-                        print(member.name + " left " + ch.name + " (" + str(len(ch.members)) + "/" + str(ch.user_limit) + ") -> not deleting it.")
-                except:
-                    print(member.name + " came from a channel i cant see")
-            try:
-                await self.controller.sortChannels(before.channel.category)
-            except:
-                await self.controller.sortChannels(after.channel.category)
+        self.partyEvent = PartyEvent.PartyEvent(client, 2)
+    async def onCheckMessage(self, message, syntax):
+        if message.content.lower().startswith(syntax + "event") and len(message.content.split(" ")) == 2:
+            
+            self.partyEvent.setMax(int(message.content.split(" ")[1]))
+            
+            self.partyEvent.initGuild(message.guild)
+            await self.partyEvent.eventChannel.send("Purging...")
+            await self.partyEvent.purgeEventChannel()
+
+            await self.partyEvent.sendInfoMessage(self.partyEvent.getNextSaturday())
+
+            await self.partyEvent.createQueueMessage()
+
+            await self.partyEvent.reactToEventMessage()
+
+    async def onReactAdd(self, reaction : discord.RawReactionActionEvent):
+        channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
+        message = discord.message
+
+        for x in await channel.history(limit=2).flatten():
+            if x.id == reaction.message_id:
+                message = x
+        if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
+            await self.partyEvent.joinQueue(reaction.member)
+    async def onReactRemove(self, reaction : discord.RawReactionActionEvent):
+        channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
+        message = discord.message
+        user = await self.client.fetch_user(reaction.user_id)
+
+        for x in await channel.history(limit=2).flatten():
+            if x.id == reaction.message_id:
+                message = x
+        if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
+            await self.partyEvent.leaveQueue(user, message.guild)
