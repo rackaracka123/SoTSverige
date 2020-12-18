@@ -27,13 +27,15 @@ class PartyEvent():
         currentDate = datetime.now()
         currentDate = currentDate + timedelta(days = self.distance(currentDate.weekday(), 5))
         return currentDate
+    def getPlatserString(self):
+        return str(self.maxPlayers - len(self.leaders)) + " (" + str(self.maxPlayers) + ") *(Totalt " + str(self.maxPlayers) + " varav " + str(len(self.leaders)) + " platser reserverade för Partypirat.)*"
     async def sendInfoMessage(self, saturday):
         saturday = format_datetime(saturday, format="EEEE d MMMM Y", locale='sv_SE')
         template = await self.getTemplate()
         leadersStr = ""
         for x in self.leaders:
             leadersStr +="<@" + str(x) + "> "
-        return await self.infoChannel.send(template.content.format(tid=saturday, queue="<#" + str(self.eventChannel.id) + ">", leaders=leadersStr))
+        return await self.infoChannel.send(template.content.format(tid=saturday, queue="<#" + str(self.eventChannel.id) + ">", leaders=leadersStr, platser=self.getPlatserString()))
     async def reactToEventMessage(self):
         message = await self.getQueueMsg()
         try:
