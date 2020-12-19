@@ -22,6 +22,8 @@ class Controller():
                     await self.partyEvent.createQueueMessage()
 
                     await self.partyEvent.reactToEventMessage()
+
+                    await self.partyEvent.createAlertTask(message.guild)
                 elif "/event" in message.content.lower():
                     await message.channel.send("**Fel argument i kommandot** \nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
             except:

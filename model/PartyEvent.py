@@ -8,6 +8,7 @@ class PartyEvent():
     def __init__(self, client : discord.client, maxPlayers):
         self.client = client
         self.maxPlayers = maxPlayers
+        self.alertTask = False
     def initGuild(self, guild : discord.Guild):
         self.eventChannel = discord.utils.get(guild.channels, name="event-anmälan")
         self.infoChannel = discord.utils.get(guild.channels, name="event-info")
@@ -110,14 +111,17 @@ class PartyEvent():
     def calculateMinutesToEvent(self):
         a = datetime.now()
         sat = self.getNextSaturday()
-        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=17, minute=30)
+        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=12, minute=27)
         return round((sat-a).total_seconds()/60)
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
             return
         await asyncio.sleep(self.calculateMinutesToEvent() * 60)
         await self.alertQueue(guild)
+        self.alertTask = False
         
     async def createAlertTask(self, guild):
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.startAlertTimer(guild))
+        if self.alertTask == False:
+            self.alertTask = True
+            loop = asyncio.get_event_loop()
+            loop.create_task(self.startAlertTimer(guild))
