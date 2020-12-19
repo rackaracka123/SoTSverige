@@ -45,3 +45,5 @@ class Controller():
                 message = x
         if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
             await self.partyEvent.leaveQueue(user, message.guild)
+    async def onGuildAvailable(self, guild):
+        await self.partyEvent.createAlertTask(guild)

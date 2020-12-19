@@ -1,11 +1,17 @@
 import discord
 import controller.Controller
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.members = True
+client = discord.Client(intents=intents)
 controller = controller.Controller.Controller(client)
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+
+@client.event
+async def on_guild_available(guild):
+    await controller.onGuildAvailable(guild)
 
 @client.event
 async def on_voice_state_update(member, before, after):

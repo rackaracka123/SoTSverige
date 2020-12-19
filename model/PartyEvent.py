@@ -2,6 +2,7 @@ import discord
 from datetime import datetime
 from datetime import timedelta
 from babel.dates import format_datetime
+import asyncio
 
 class PartyEvent():
     def __init__(self, client : discord.client, maxPlayers):
@@ -68,9 +69,6 @@ class PartyEvent():
       
         if len(embed.fields) >= self.maxPlayers - 1:
             embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
-        else:
-            print("")
-            #embed.add_field(name= str(len(queueMsg.embeds[0].fields) + 1) + " " + member.name , value="-"*2*len(member.name), inline=False)
 
         embed.set_footer(text="Bot skapad av: @rackaracka#6651")
         await queueMsg.edit(embed=embed)
@@ -96,3 +94,30 @@ class PartyEvent():
         
         embed.set_footer(text="Bot skapad av: @rackaracka#6651")
         await queueMsg.edit(embed=embed)
+
+    async def alertQueue(self, guild : discord.Guild):
+        self.initGuild(guild)
+        msg = await self.getQueueMsg()
+        counter = 0
+        
+        for x in msg.embeds[0].fields:
+            if "#" in x.name:
+                counter+=1
+                name = x.name[len(str(counter)) + 1:]
+                member = guild.get_member_named(name)
+                await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nSe till att vara redo vid utgiven tid för att ha möjlighet till en plats")
+
+    def calculateMinutesToEvent(self):
+        a = datetime.now()
+        sat = self.getNextSaturday()
+        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=16, minute=0)
+        return round((sat-a).total_seconds()/60)
+    async def startAlertTimer(self, guild):
+        if self.calculateMinutesToEvent() < 0:
+            return
+        await asyncio.sleep(self.calculateMinutesToEvent() * 60)
+        await self.alertQueue(guild)
+        
+    async def createAlertTask(self, guild):
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.startAlertTimer(guild))
