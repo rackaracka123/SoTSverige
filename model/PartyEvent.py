@@ -105,12 +105,12 @@ class PartyEvent():
                 counter+=1
                 name = x.name[len(str(counter)) + 1:]
                 member = guild.get_member_named(name)
-                await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nSe till att vara redo vid utgiven tid för att ha möjlighet till en plats")
+                await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nhttps://discord.gg/dHVPqUKfJb Se till att infinna dig här på utsägen tid för att vara med.")
 
     def calculateMinutesToEvent(self):
         a = datetime.now()
         sat = self.getNextSaturday()
-        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=16, minute=0)
+        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=17, minute=30)
         return round((sat-a).total_seconds()/60)
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
