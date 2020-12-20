@@ -25,9 +25,9 @@ class Controller():
 
                     await self.partyEvent.createAlertTask(message.guild)
                 elif "/event" in message.content.lower():
-                    await message.channel.send("**Fel argument i kommandot** \nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
+                    await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
             except:
-                await message.channel.send("**Fel argument i kommandot***\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
+                await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
     async def onReactAdd(self, reaction : discord.RawReactionActionEvent):
         channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
         message = discord.message

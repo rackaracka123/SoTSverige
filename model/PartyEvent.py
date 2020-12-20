@@ -20,11 +20,9 @@ class PartyEvent():
     async def purgeEventChannel(self):
         await self.eventChannel.purge()
     def distance(self, x, y):
-        if x >= y:
-            result = x - y
-        else:
-            result = y - x
-        return result
+        for day in range(7):
+            if (x + day) % 7 == y:
+                return day
     def getNextSaturday(self):
         currentDate = datetime.now()
         currentDate = currentDate + timedelta(days = self.distance(currentDate.weekday(), 5))
@@ -37,11 +35,11 @@ class PartyEvent():
         leadersStr = ""
         for x in self.leaders:
             leadersStr +="<@" + str(x) + "> "
-        return await self.infoChannel.send(template.content.format(tid=saturday, queue="<#" + str(self.eventChannel.id) + ">", leaders=leadersStr, platser=self.getPlatserString()))
+        return await self.infoChannel.send(template.format(tid=saturday, queue="<#" + str(self.eventChannel.id) + ">", leaders=leadersStr, platser=self.getPlatserString()))
     async def reactToEventMessage(self):
         message = await self.getQueueMsg()
         try:
-            await message.add_reaction(discord.utils.get(self.eventChannel.guild.emojis, name="yes"))
+            await message.add_reaction(discord.utils.get(self.eventChannel.guild.emojis, name="Yes"))
         except:
             await message.add_reaction("👌")
     async def createQueueMessage(self):
@@ -49,7 +47,7 @@ class PartyEvent():
         await self.eventChannel.send(embed=embed)
     async def getTemplate(self):
         arr = await self.templateChannel.history(limit=1).flatten()
-        return arr[0]
+        return arr[0].content.replace("`", "")
     async def getQueueMsg(self):
         arr = await self.eventChannel.history(limit=1).flatten()
         return arr[0]
@@ -111,7 +109,7 @@ class PartyEvent():
     def calculateMinutesToEvent(self):
         a = datetime.now()
         sat = self.getNextSaturday()
-        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=12, minute=27)
+        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=17, minute=0)
         return round((sat-a).total_seconds()/60)
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
