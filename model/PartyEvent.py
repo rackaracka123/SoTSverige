@@ -109,7 +109,7 @@ class PartyEvent():
     def calculateMinutesToEvent(self):
         a = datetime.now()
         sat = self.getNextSaturday()
-        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=17, minute=0)
+        sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=18, minute=0)
         return round((sat-a).total_seconds()/60)
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
