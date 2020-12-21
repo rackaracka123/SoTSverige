@@ -63,7 +63,7 @@ class PartyEvent():
         
         for counter, x in enumerate(queueMsg.embeds[0].fields):
             name = x.name[len(str(counter)) + 1:]
-            if "Event" in name:
+            if "vent" in name:
                 continue
             embed.add_field(name=x.name, inline=False, value=x.value)
         
@@ -71,7 +71,7 @@ class PartyEvent():
         embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields) + 1) + "/" + str(self.maxPlayers) + ")"
         embed.add_field(name= str(len(embed.fields) + 1) + " " + member.name + "#" + member.discriminator , value="-"*2*len(member.name), inline=False)
       
-        if len(embed.fields) >= self.maxPlayers - 1:
+        if len(embed.fields) >= self.maxPlayers:
             embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
 
         embed.set_footer(text="Bot skapad av: @rackaracka#6651")
@@ -87,7 +87,7 @@ class PartyEvent():
             counter+=1
             name = x.name[len(str(counter)) + 1:]
 
-            if "Event" in name or name == user.name + "#" + user.discriminator:
+            if "vent" in name or name == user.name + "#" + user.discriminator:
                 counter-=1
                 continue
             else:
