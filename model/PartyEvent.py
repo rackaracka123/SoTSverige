@@ -43,7 +43,7 @@ class PartyEvent():
         except:
             await message.add_reaction("👌")
     async def createQueueMessage(self):
-        embed=discord.Embed(title="Event kö")
+        embed=discord.Embed(title="Event kö **Reagera nedan för att vara med**")
         await self.eventChannel.send(embed=embed)
     async def getTemplate(self):
         arr = await self.templateChannel.history(limit=1).flatten()
@@ -63,7 +63,7 @@ class PartyEvent():
             embed.add_field(name=x.name, inline=False, value=x.value)
         
         
-        embed.title="Event kö (Antalet personer: " + str(len(embed.fields) + 1) + "/" + str(self.maxPlayers) + ")"
+        embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields) + 1) + "/" + str(self.maxPlayers) + ")"
         embed.add_field(name= str(len(embed.fields) + 1) + " " + member.name + "#" + member.discriminator , value="-"*2*len(member.name), inline=False)
       
         if len(embed.fields) >= self.maxPlayers - 1:
@@ -87,7 +87,7 @@ class PartyEvent():
             else:
                 embed.add_field(name = str(counter) + " " + name, inline=False, value=x.value)
 
-        embed.title="Event kö (Antalet personer: " + str(len(embed.fields)) + "/" + str(self.maxPlayers) + ")"
+        embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields)) + "/" + str(self.maxPlayers) + ")"
         if len(embed.fields) >= self.maxPlayers:
             embed.insert_field_at(self.maxPlayers, name="'🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
         
