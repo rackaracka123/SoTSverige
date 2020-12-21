@@ -62,8 +62,7 @@ class PartyEvent():
         embed = discord.Embed()
         
         for counter, x in enumerate(queueMsg.embeds[0].fields):
-            name = x.name[len(str(counter)) + 1:]
-            if "vent" in name:
+            if "Event" in x.name:
                 continue
             embed.add_field(name=x.name, inline=False, value=x.value)
         
@@ -87,7 +86,7 @@ class PartyEvent():
             counter+=1
             name = x.name[len(str(counter)) + 1:]
 
-            if "vent" in name or name == user.name + "#" + user.discriminator:
+            if "Event" in x.name or name == user.name + "#" + user.discriminator:
                 counter-=1
                 continue
             else:
