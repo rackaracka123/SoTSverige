@@ -13,6 +13,7 @@ class PartyEvent():
         self.eventChannel = discord.utils.get(guild.channels, name="event-anmälan")
         self.infoChannel = discord.utils.get(guild.channels, name="event-info")
         self.templateChannel = discord.utils.get(guild.channels, name="party-pirate-template")
+        self.commandCentral = discord.utils.get(guild.channels, name="kommando-central")
     def setMax(self, nrMax):
         self.maxPlayers = nrMax
     def setLeaders(self, leaders):
@@ -45,6 +46,9 @@ class PartyEvent():
     async def createQueueMessage(self):
         embed=discord.Embed(title="Event kö **Reagera nedan för att vara med**")
         await self.eventChannel.send(embed=embed)
+    async def getMax(self):
+        arr = await self.commandCentral.history(limit=1).flatten()
+        return int(arr[0].content.split(" ")[1])
     async def getTemplate(self):
         arr = await self.templateChannel.history(limit=1).flatten()
         return arr[0].content.replace("`", "")
@@ -53,6 +57,7 @@ class PartyEvent():
         return arr[0]
     async def joinQueue(self, member : discord.member):
         self.initGuild(member.guild)
+        self.maxPlayers = await self.getMax()
         queueMsg = await self.getQueueMsg()
         embed = discord.Embed()
         
@@ -74,6 +79,7 @@ class PartyEvent():
 
     async def leaveQueue(self, user : discord.member, guild : discord.guild):
         self.initGuild(guild)
+        self.maxPlayers = await self.getMax()
         queueMsg = await self.getQueueMsg()
         embed = discord.Embed()
         counter = 0
