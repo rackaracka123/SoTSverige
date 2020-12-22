@@ -94,7 +94,7 @@ class PartyEvent():
 
         embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields)) + "/" + str(self.maxPlayers) + ")"
         if len(embed.fields) >= self.maxPlayers:
-            embed.insert_field_at(self.maxPlayers, name="'🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
+            embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
         
         embed.set_footer(text="Bot skapad av: @rackaracka#6651")
         await queueMsg.edit(embed=embed)
