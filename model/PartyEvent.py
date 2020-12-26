@@ -105,12 +105,15 @@ class PartyEvent():
         counter = 0
         
         for x in msg.embeds[0].fields:
-            if "#" in x.name:
-                counter+=1
-                name = x.name[len(str(counter)) + 1:]
-                member = guild.get_member_named(name)
-                await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nhttps://discord.gg/dHVPqUKfJb Se till att infinna dig här på utsägen tid för att vara med.")
-
+            try:
+                if "#" in x.name:
+                    counter+=1
+                    name = x.name[len(str(counter)) + 1:]
+                    member = guild.get_member_named(name)
+                    await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nhttps://discord.gg/dHVPqUKfJb Se till att infinna dig här på utsägen tid för att vara med.")
+                    print("Successfully wrote to user " + name)
+            except:
+                print("Error in writing to user " + x.name)
     def calculateMinutesToEvent(self):
         a = datetime.now()
         sat = self.getNextSaturday()
