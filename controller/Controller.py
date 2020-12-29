@@ -1,10 +1,12 @@
 import discord
 from model import PartyEvent
+from model import MessageManager
 
 class Controller():
     def __init__(self, client : discord.client):
         self.client = client
         self.partyEvent = PartyEvent.PartyEvent(client, 2)
+        self.messageManager = MessageManager.MessageManager(client)
     async def onCheckMessage(self, message, syntax):
         if [x.name.lower()=="party pirat" or x.name.lower()=="moderatorer" or x.name.lower()=="grundare" or x.name.lower()=="ägare" or x.name.lower()=="admin" for x in message.author.roles]:
             try:
@@ -30,23 +32,20 @@ class Controller():
                 await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
             try:
                 if message.content.lower().startswith("/ersätt") and len(message.content.split(" ")) > 2:
-                    for x in self.client.get_all_channels():
-                        if x.type.name == "category" or "voice" in x.type.name:
-                            continue
-                        print("Searching in " + x.name)
-                        for y in await x.history(limit=100).flatten():
-                            if y.id == int(message.content.split(" ")[1]):
-                                print("Found the message")
-                                spaceCntr = 0
-                                msg=""
-                                for z in message.content:
-                                    if spaceCntr < 2:
-                                        if z == ' ':
-                                            spaceCntr+=1
-                                    else:
-                                        msg+=z
-                                await y.edit(content=msg)
-                                break
+                    targetMsg = await self.messageManager.getMessageById(int(message.content.split(" ")[1]))
+                    spaceCntr = 0
+                    msg=""
+                    for z in message.content:
+                        if spaceCntr < 2:
+                            if z == ' ':
+                                spaceCntr+=1
+                        else:
+                            msg+=z
+                    await targetMsg.edit(content=msg)
+                    embed = discord.Embed()
+                    embed.add_field(name="**Meddelandet byttes ut :)**\n(raderar kommando meddelandet för att rensa upp lite)", value="[länk till meddelandet hittas här](" + targetMsg.jump_url + ")", inline=False)
+                    await message.channel.send(embed=embed)
+                    await message.delete()
             except:
                 await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/ersätt [message id] [nytt meddelande här]`")
     async def onReactAdd(self, reaction : discord.RawReactionActionEvent):
