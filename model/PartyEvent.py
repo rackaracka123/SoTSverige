@@ -47,8 +47,9 @@ class PartyEvent():
         embed=discord.Embed(title="Event kö **Reagera nedan för att vara med**")
         await self.eventChannel.send(embed=embed)
     async def getMax(self):
-        arr = await self.commandCentral.history(limit=1).flatten()
-        return int(arr[0].content.split(" ")[1])
+        queueMsg = await self.getQueueMsg()
+        max = int(queueMsg.embeds[0].title.split("/")[1].replace(")", ""))
+        return max
     async def getTemplate(self):
         arr = await self.templateChannel.history(limit=1).flatten()
         return arr[0].content.replace("`", "")
