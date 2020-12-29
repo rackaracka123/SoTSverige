@@ -26,7 +26,7 @@ class PartyEvent():
                 return day
     def getNextSaturday(self):
         currentDate = datetime.now()
-        currentDate = currentDate + timedelta(days = self.distance(currentDate.weekday(), 5))
+        currentDate = currentDate + timedelta(days = self.distance(currentDate.weekday(), 4))
         return currentDate
     def getPlatserString(self):
         return str(self.maxPlayers - len(self.leaders)) + " (" + str(self.maxPlayers) + ") *(Totalt " + str(self.maxPlayers) + " varav " + str(len(self.leaders)) + " platser reserverade för Partypirat.)*"
