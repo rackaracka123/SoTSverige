@@ -28,6 +28,27 @@ class Controller():
                     await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
             except:
                 await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
+            try:
+                if message.content.lower().startswith("/ersätt") and len(message.content.split(" ")) > 2:
+                    for x in self.client.get_all_channels():
+                        if x.type.name == "category" or "voice" in x.type.name:
+                            continue
+                        print("Searching in " + x.name)
+                        for y in await x.history(limit=100).flatten():
+                            if y.id == int(message.content.split(" ")[1]):
+                                print("Found the message")
+                                spaceCntr = 0
+                                msg=""
+                                for z in message.content:
+                                    if spaceCntr < 2:
+                                        if z == ' ':
+                                            spaceCntr+=1
+                                    else:
+                                        msg+=z
+                                await y.edit(content=msg)
+                                break
+            except:
+                await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/ersätt [message id] [nytt meddelande här]`")
     async def onReactAdd(self, reaction : discord.RawReactionActionEvent):
         channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
         message = discord.message
