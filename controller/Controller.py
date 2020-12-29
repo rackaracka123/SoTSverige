@@ -32,7 +32,8 @@ class Controller():
                 await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
             try:
                 if message.content.lower().startswith("/ersätt") and len(message.content.split(" ")) > 2:
-                    targetMsg = await self.messageManager.getMessageById(int(message.content.split(" ")[1]))
+                    msgId = int(message.content.split(" ")[1])
+                    targetMsg = await self.messageManager.getMessageById(msgId)
                     spaceCntr = 0
                     msg=""
                     for z in message.content:
