@@ -109,7 +109,7 @@ class PartyEvent():
         content = """**Kontakar personer i kön...**
 """
         loggMsg = await self.LoggChannel.send(content)
-        await asyncio.sleep(1000)
+
         for x in msg.embeds[0].fields:
             try:
                 if "#" in x.name:
