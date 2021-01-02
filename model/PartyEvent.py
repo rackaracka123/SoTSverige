@@ -14,6 +14,7 @@ class PartyEvent():
         self.infoChannel = discord.utils.get(guild.channels, name="event-info")
         self.templateChannel = discord.utils.get(guild.channels, name="party-pirate-template")
         self.commandCentral = discord.utils.get(guild.channels, name="kommando-central")
+        self.LoggChannel = discord.utils.get(guild.channels, name="party-logg-central")
     def setMax(self, nrMax):
         self.maxPlayers = nrMax
     def setLeaders(self, leaders):
@@ -26,7 +27,7 @@ class PartyEvent():
                 return day
     def getNextSaturday(self):
         currentDate = datetime.now()
-        currentDate = currentDate + timedelta(days = self.distance(currentDate.weekday(), 4))
+        currentDate = currentDate + timedelta(days = self.distance(currentDate.weekday(), 5)) #0 = måndag, 1 = tisdag...
         return currentDate
     def getPlatserString(self):
         return str(self.maxPlayers - len(self.leaders)) + " (" + str(self.maxPlayers) + ") *(Totalt " + str(self.maxPlayers) + " varav " + str(len(self.leaders)) + " platser reserverade för Partypirat.)*"
@@ -104,7 +105,10 @@ class PartyEvent():
         self.initGuild(guild)
         msg = await self.getQueueMsg()
         counter = 0
-        
+
+        content = """**Kontakar personer i kön...**
+"""
+        loggMsg = await self.LoggChannel.send(content)
         for x in msg.embeds[0].fields:
             try:
                 if "#" in x.name:
@@ -112,9 +116,15 @@ class PartyEvent():
                     name = x.name[len(str(counter)) + 1:]
                     member = guild.get_member_named(name)
                     await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nhttps://discord.gg/dHVPqUKfJb Se till att infinna dig här på utsägen tid för att vara med.")
-                    print("Successfully wrote to user " + name)
+                    print("Successfully wrote to user " + x.name)
+                    content+=str(counter) + " <@" + str(member.id) + "> Status: **Lyckades**\n"
+                    await loggMsg.edit(content=content)
             except:
+                content+=x.name +  " Status: **Misslyckades**\n"
+                await loggMsg.edit(content=content)
                 print("Error in writing to user " + x.name)
+        content+="**Hoppas det går bra med eventet**"
+        await loggMsg.edit(content=content)
     def calculateMinutesToEvent(self):
         a = datetime.now()
         sat = self.getNextSaturday()
@@ -123,7 +133,7 @@ class PartyEvent():
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
             return
-        await asyncio.sleep(self.calculateMinutesToEvent() * 60)
+        await asyncio.sleep(2)#self.calculateMinutesToEvent() * 60)
         await self.alertQueue(guild)
         self.alertTask = False
         
