@@ -13,9 +13,9 @@ async def on_ready():
 async def on_guild_available(guild):
     await controller.onGuildAvailable(guild)
 
-@client.event
-async def on_voice_state_update(member, before, after):
-    print("Voice state is not enabled")
+#@client.event
+#async def on_voice_state_update(member, before, after):
+ #   print("Voice state is not enabled")
 
 @client.event
 async def on_raw_reaction_add(reaction):
