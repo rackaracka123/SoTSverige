@@ -109,6 +109,7 @@ class PartyEvent():
         content = """**Kontakar personer i kön...**
 """
         loggMsg = await self.LoggChannel.send(content)
+        await asyncio.sleep(1000)
         for x in msg.embeds[0].fields:
             try:
                 if "#" in x.name:
@@ -133,7 +134,7 @@ class PartyEvent():
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
             return
-        await asyncio.sleep(2)#self.calculateMinutesToEvent() * 60)
+        await asyncio.sleep(self.calculateMinutesToEvent() * 60)
         await self.alertQueue(guild)
         self.alertTask = False
         
