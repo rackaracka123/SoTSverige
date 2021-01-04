@@ -45,7 +45,7 @@ class PartyEvent():
         except:
             await message.add_reaction("👌")
     async def createQueueMessage(self):
-        embed=discord.Embed(title="Event kö **Reagera nedan för att vara med**")
+        embed=discord.Embed(title="Event kö **Reagera nedan för att vara med** (Antalet personer: 0/" + str(self.maxPlayers) + ")")
         await self.eventChannel.send(embed=embed)
     async def getMax(self):
         queueMsg = await self.getQueueMsg()
