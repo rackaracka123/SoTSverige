@@ -77,6 +77,7 @@ class PartyEvent():
 
         embed.set_footer(text="Bot skapad av: @rackaracka#6651")
         await queueMsg.edit(embed=embed)
+        asyncio.get_event_loop().create_task(self.loggRegUnreg(member, "reg"))
 
     async def leaveQueue(self, user : discord.member, guild : discord.guild):
         self.initGuild(guild)
@@ -103,7 +104,17 @@ class PartyEvent():
         
         embed.set_footer(text="Bot skapad av: @rackaracka#6651")
         await queueMsg.edit(embed=embed)
+        asyncio.get_event_loop().create_task(self.loggRegUnreg(user, "unreg"))
 
+    async def loggRegUnreg(self, member, action):
+        if action == "reg":
+            embed = discord.Embed(title=":inbox_tray:")
+            embed.add_field(name=datetime.today().now().strftime("%d-%m-%Y, %H:%M:%S"), value="<@" + str(member.id) + ">")
+            await self.LoggChannel.send(embed=embed)
+        elif action == "unreg":
+            embed = discord.Embed(title=":outbox_tray:")
+            embed.add_field(name=datetime.today().now().strftime("%d-%m-%Y, %H:%M:%S"), value="<@" + str(member.id) + ">")
+            await self.LoggChannel.send(embed=embed)
     async def alertQueue(self, guild : discord.Guild):
         self.initGuild(guild)
         msg = await self.getQueueMsg()
