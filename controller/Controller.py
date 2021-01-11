@@ -10,6 +10,12 @@ class Controller():
     async def onCheckMessage(self, message, syntax):
         if [x.name.lower()=="party pirat" or x.name.lower()=="moderatorer" or x.name.lower()=="grundare" or x.name.lower()=="ägare" or x.name.lower()=="admin" for x in message.author.roles]:
             try:
+                if message.content.lower().startswith(syntax + "purge"):
+                    await message.channel.purge()
+            except:
+                None
+
+            try:
                 if message.content.lower().startswith(syntax + "event") and len(message.raw_mentions) != 0:
                 
                     self.partyEvent.setMax(int(message.content.split(" ")[1]))
