@@ -109,11 +109,11 @@ class PartyEvent():
     async def loggRegUnreg(self, member, action):
         if action == "reg":
             embed = discord.Embed(title=":inbox_tray:")
-            embed.add_field(name=datetime.today().now().strftime("%d-%m-%Y, %H:%M:%S"), value="<@" + str(member.id) + ">")
+            embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
             await self.LoggChannel.send(embed=embed)
         elif action == "unreg":
             embed = discord.Embed(title=":outbox_tray:")
-            embed.add_field(name=datetime.today().now().strftime("%d-%m-%Y, %H:%M:%S"), value="<@" + str(member.id) + ">")
+            embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
             await self.LoggChannel.send(embed=embed)
     async def alertQueue(self, guild : discord.Guild):
         self.initGuild(guild)
