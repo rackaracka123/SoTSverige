@@ -70,7 +70,7 @@ class PartyEvent():
         
         
         embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields) + 1) + "/" + str(self.maxPlayers) + ")"
-        embed.add_field(name= str(len(embed.fields) + 1) + " " + member.name + "#" + member.discriminator , value="-"*2*len(member.name), inline=False)
+        embed.add_field(name= str(len(embed.fields) + 1), value="<@" + str(member.id) + ">", inline=False)
       
         if len(embed.fields) >= self.maxPlayers:
             embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
@@ -86,13 +86,16 @@ class PartyEvent():
         counter = 0
         for x in queueMsg.embeds[0].fields:
             counter+=1
-            name = x.name[len(str(counter)) + 1:]
+            if "alla under denna rad är reserver" == x.value:
+                counter-=1
+                continue
+            id = int(x.value.replace("<@", "").replace(">", "").replace("!",""))
 
-            if "Event" in x.name or name == user.name + "#" + user.discriminator:
+            if "Event" in x.name or id == user.id:
                 counter-=1
                 continue
             else:
-                embed.add_field(name = str(counter) + " " + name, inline=False, value=x.value)
+                embed.add_field(name= str(len(embed.fields) + 1), value="<@" + str(id) + ">", inline=False)
 
         embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields)) + "/" + str(self.maxPlayers) + ")"
         if len(embed.fields) >= self.maxPlayers:
@@ -112,16 +115,17 @@ class PartyEvent():
 
         for x in msg.embeds[0].fields:
             try:
-                if "#" in x.name:
+                if "Event" not in x.name:
                     counter+=1
-                    name = x.name[len(str(counter)) + 1:]
-                    member = guild.get_member_named(name)
+                    id = int(x.value.replace("<@", "").replace(">", "").replace("!",""))
+
+                    member = guild.get_member(id)
                     await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nhttps://discord.gg/dHVPqUKfJb Se till att infinna dig här på utsägen tid för att vara med.")
-                    print("Successfully wrote to user " + x.name)
+                    print("Successfully wrote to user " + x.value)
                     content+=str(counter) + " <@" + str(member.id) + "> Status: **Lyckades**\n"
                     await loggMsg.edit(content=content)
             except:
-                content+=x.name +  " Status: **Misslyckades**\n"
+                content+=x.value + " Status: **Misslyckades**\n"
                 await loggMsg.edit(content=content)
                 print("Error in writing to user " + x.name)
         content+="**Hoppas det går bra med eventet**"

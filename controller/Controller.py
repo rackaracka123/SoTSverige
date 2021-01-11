@@ -53,7 +53,7 @@ class Controller():
         channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
         message = discord.message
 
-        for x in await channel.history(limit=2).flatten():
+        for x in await channel.history(limit=1).flatten():
             if x.id == reaction.message_id:
                 message = x
         if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
