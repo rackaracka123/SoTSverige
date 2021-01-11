@@ -19,7 +19,7 @@ class Controller():
                     await self.partyEvent.eventChannel.send("Purging...")
                     await self.partyEvent.purgeEventChannel()
 
-                    await self.partyEvent.sendInfoMessage(self.partyEvent.getNextSaturday())
+                    #await self.partyEvent.sendInfoMessage(self.partyEvent.getNextSaturday())
 
                     await self.partyEvent.createQueueMessage()
 
