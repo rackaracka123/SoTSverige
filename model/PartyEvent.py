@@ -70,7 +70,7 @@ class PartyEvent():
         
         
         embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields) + 1) + "/" + str(self.maxPlayers) + ")"
-        embed.add_field(name= str(len(embed.fields) + 1), value="<@" + str(member.id) + ">", inline=False)
+        embed.add_field(name= str(len(embed.fields) + 1), value="<@!" + str(member.id) + ">", inline=False)
       
         if len(embed.fields) >= self.maxPlayers:
             embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
@@ -96,7 +96,7 @@ class PartyEvent():
                 counter-=1
                 continue
             else:
-                embed.add_field(name= str(len(embed.fields) + 1), value="<@" + str(id) + ">", inline=False)
+                embed.add_field(name= str(len(embed.fields) + 1), value="<@!" + str(id) + ">", inline=False)
 
         embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields)) + "/" + str(self.maxPlayers) + ")"
         if len(embed.fields) >= self.maxPlayers:
