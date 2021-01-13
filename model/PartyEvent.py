@@ -115,6 +115,7 @@ class PartyEvent():
             embed = discord.Embed(title=":outbox_tray:")
             embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
             await self.LoggChannel.send(embed=embed)
+            
     async def alertQueue(self, guild : discord.Guild):
         self.initGuild(guild)
         msg = await self.getQueueMsg()
