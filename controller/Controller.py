@@ -76,3 +76,14 @@ class Controller():
             await self.partyEvent.leaveQueue(user, message.guild)
     async def onGuildAvailable(self, guild):
         await self.partyEvent.createAlertTask(guild)
+    async def onVoiceUpdate(self, member, before, after):
+        try:
+            if after.channel.name=="Event rum":
+                await self.partyEvent.onJoinEventChannel(member)
+        except:
+            None
+        try:
+            if before.channel.name=="Event rum":
+                await self.partyEvent.onLeaveEventChannel(member)
+        except:
+            None

@@ -26,6 +26,10 @@ async def on_raw_reaction_remove(reaction):
     await controller.onReactRemove(reaction)
 
 @client.event
+async def on_voice_state_update(member, before, after):
+    await controller.onVoiceUpdate(member, before, after)
+
+@client.event
 async def on_message(message):
     if message.author == client.user:
         return

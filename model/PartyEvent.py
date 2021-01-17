@@ -45,11 +45,10 @@ class PartyEvent():
         except:
             await message.add_reaction("👌")
     async def createQueueMessage(self):
-        embed=discord.Embed(title="Event kö **Reagera nedan för att vara med** (Antalet personer: 0/" + str(self.maxPlayers) + ")")
-        await self.eventChannel.send(embed=embed)
+        await self.eventChannel.send("Event kö **Reagera nedan för att vara med** (Antalet personer: 0/" + str(self.maxPlayers) + ")\n")
     async def getMax(self):
         queueMsg = await self.getQueueMsg()
-        max = int(queueMsg.embeds[0].title.split("/")[1].replace(")", ""))
+        max = int(queueMsg.content.split(")")[0].split("/")[1])
         return max
     async def getTemplate(self):
         arr = await self.templateChannel.history(limit=1).flatten()
@@ -57,62 +56,68 @@ class PartyEvent():
     async def getQueueMsg(self):
         arr = await self.eventChannel.history(limit=1).flatten()
         return arr[0]
+    def messageToArray(self, message):
+        queue = []
+        for person in message.content.split("\n"):
+            if "<@!" in person:
+                queue.append(person.split(" "))
+        return queue
     async def joinQueue(self, member : discord.member):
         self.initGuild(member.guild)
         self.maxPlayers = await self.getMax()
         queueMsg = await self.getQueueMsg()
-        embed = discord.Embed()
+        queueArr = self.messageToArray(queueMsg)
+        msgToSend = "Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(queueArr) + 1) + "/" + str(self.maxPlayers) + ")\n"
         
-        for counter, x in enumerate(queueMsg.embeds[0].fields):
-            if "Event" in x.name:
-                continue
-            embed.add_field(name=x.name, inline=False, value=x.value)
+        for counter, x in enumerate(queueArr):
+            msgToSend += x[0] + " " + x[1] + "\n"
+            if counter == self.maxPlayers:
+                msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
         
-        
-        embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields) + 1) + "/" + str(self.maxPlayers) + ")"
-        embed.add_field(name= str(len(embed.fields) + 1), value="<@!" + str(member.id) + ">", inline=False)
-      
-        if len(embed.fields) >= self.maxPlayers:
-            embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
+        msgToSend+= str(len(queueArr) + 1) + " <@!" + str(member.id) + ">\n"
 
-        embed.set_footer(text="Bot skapad av: @rackaracka#6651")
-        await queueMsg.edit(embed=embed)
+        if len(queueArr) + 1 == self.maxPlayers:
+            msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
+        msgToSend+="Bot skapad av: <@240772724006453248>"
+        await queueMsg.edit(content=msgToSend)
         asyncio.get_event_loop().create_task(self.loggRegUnreg(member, "reg"))
 
     async def leaveQueue(self, user : discord.member, guild : discord.guild):
         self.initGuild(guild)
         self.maxPlayers = await self.getMax()
         queueMsg = await self.getQueueMsg()
-        embed = discord.Embed()
+        queueArr = self.messageToArray(queueMsg)
+        msgToSend = ""
+
         counter = 0
-        for x in queueMsg.embeds[0].fields:
+        for x in queueArr:
             counter+=1
-            if "alla under denna rad är reserver" == x.value:
+            if "Alla under denna rad är reserver" in x:
                 counter-=1
                 continue
-            id = int(x.value.replace("<@", "").replace(">", "").replace("!",""))
+            id = int(x[1].replace("<@!", "").replace(">", ""))
 
-            if "Event" in x.name or id == user.id:
+            if "Event" in x or id == user.id:
                 counter-=1
                 continue
             else:
-                embed.add_field(name= str(len(embed.fields) + 1), value="<@!" + str(id) + ">", inline=False)
+                msgToSend+=str(counter) + " <@!" + str(id) + "> \n"
 
-        embed.title="Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(embed.fields)) + "/" + str(self.maxPlayers) + ")"
-        if len(embed.fields) >= self.maxPlayers:
-            embed.insert_field_at(self.maxPlayers, name="🚧 Event anmälan är nu full 🚧", value= "alla under denna rad är reserver", inline=False)
+            if counter == self.maxPlayers:
+                msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
         
-        embed.set_footer(text="Bot skapad av: @rackaracka#6651")
-        await queueMsg.edit(embed=embed)
+        msgToSend+="Bot skapad av: <@240772724006453248>"
+        title = "Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(counter) + "/" + str(self.maxPlayers) + ")\n"
+        await queueMsg.edit(content=title + msgToSend)
         asyncio.get_event_loop().create_task(self.loggRegUnreg(user, "unreg"))
 
     async def loggRegUnreg(self, member, action):
         if action == "reg":
-            embed = discord.Embed(title=":inbox_tray:")
+            embed = discord.Embed(title=":inbox_tray: Kö")
             embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
             await self.LoggChannel.send(embed=embed)
         elif action == "unreg":
-            embed = discord.Embed(title=":outbox_tray:")
+            embed = discord.Embed(title=":outbox_tray: Kö")
             embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
             await self.LoggChannel.send(embed=embed)
             
@@ -147,13 +152,22 @@ class PartyEvent():
         sat = self.getNextSaturday()
         sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=18, minute=0)
         return round((sat-a).total_seconds()/60)
+    async def onJoinEventChannel(self, member):
+        embed = discord.Embed(title=":inbox_tray: Event rum")
+        embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
+        self.initGuild(member.guild)
+        await self.LoggChannel.send(embed=embed)
+    async def onLeaveEventChannel(self, member):
+        embed = discord.Embed(title=":outbox_tray: Event rum")
+        embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
+        self.initGuild(member.guild)
+        await self.LoggChannel.send(embed=embed)
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
             return
         await asyncio.sleep(self.calculateMinutesToEvent() * 60)
         await self.alertQueue(guild)
         self.alertTask = False
-        
     async def createAlertTask(self, guild):
         if self.alertTask == False:
             self.alertTask = True
