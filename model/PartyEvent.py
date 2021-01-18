@@ -46,8 +46,7 @@ class PartyEvent():
             await message.add_reaction("👌")
     async def createQueueMessage(self):
         await self.eventChannel.send("Event kö **Reagera nedan för att vara med** (Antalet personer: 0/" + str(self.maxPlayers) + ")\n")
-    async def getMax(self):
-        queueMsg = await self.getQueueMsg()
+    async def getMax(self, queueMsg):
         max = int(queueMsg.content.split(")")[0].split("/")[1])
         return max
     async def getTemplate(self):
@@ -64,14 +63,14 @@ class PartyEvent():
         return queue
     async def joinQueue(self, member : discord.member):
         self.initGuild(member.guild)
-        self.maxPlayers = await self.getMax()
         queueMsg = await self.getQueueMsg()
+        self.maxPlayers = await self.getMax(queueMsg)
         queueArr = self.messageToArray(queueMsg)
         msgToSend = "Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(queueArr) + 1) + "/" + str(self.maxPlayers) + ")\n"
         
         for counter, x in enumerate(queueArr):
             msgToSend += x[0] + " " + x[1] + "\n"
-            if counter == self.maxPlayers:
+            if counter == self.maxPlayers - 1:
                 msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
         
         msgToSend+= str(len(queueArr) + 1) + " <@!" + str(member.id) + ">\n"
@@ -84,8 +83,8 @@ class PartyEvent():
 
     async def leaveQueue(self, user : discord.member, guild : discord.guild):
         self.initGuild(guild)
-        self.maxPlayers = await self.getMax()
         queueMsg = await self.getQueueMsg()
+        self.maxPlayers = await self.getMax(queueMsg)
         queueArr = self.messageToArray(queueMsg)
         msgToSend = ""
 
