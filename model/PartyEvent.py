@@ -129,21 +129,23 @@ class PartyEvent():
 """
         loggMsg = await self.LoggChannel.send(content)
 
-        for x in msg.embeds[0].fields:
+        for x in self.messageToArray(msg):
             try:
-                if "Event" not in x.name:
+                if "Alla under denna rad är reserver" not in x:
                     counter+=1
-                    id = int(x.value.replace("<@", "").replace(">", "").replace("!",""))
+                    id = int(x[1].replace("<@!", "").replace(">", ""))
 
                     member = guild.get_member(id)
                     await member.send("**Du är i kö till Sea of Thieves Sveriges event idag**\nhttps://discord.gg/dHVPqUKfJb Se till att infinna dig här på utsägen tid för att vara med.")
-                    print("Successfully wrote to user " + x.value)
+                    print("Successfully wrote to user " + x[1])
                     content+=str(counter) + " <@" + str(member.id) + "> Status: **Lyckades**\n"
                     await loggMsg.edit(content=content)
+                if "Alla under denna rad är reserver" in x:
+                    return
             except:
-                content+=x.value + " Status: **Misslyckades**\n"
+                content+=x[1] + " Status: **Misslyckades**\n"
                 await loggMsg.edit(content=content)
-                print("Error in writing to user " + x.name)
+                print("Error in writing to user " + x[1])
         content+="**Hoppas det går bra med eventet**"
         await loggMsg.edit(content=content)
     def calculateMinutesToEvent(self):
