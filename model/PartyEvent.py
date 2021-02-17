@@ -53,8 +53,8 @@ class PartyEvent():
         arr = await self.templateChannel.history(limit=1).flatten()
         return arr[0].content.replace("`", "")
     async def getQueueMsg(self):
-        arr = await self.eventChannel.history(limit=1).flatten()
-        return arr[0]
+        arr = await self.eventChannel.history(limit=100).flatten()
+        return arr[len(arr) - 1]
     def messageToArray(self, message):
         queue = []
         for person in message.content.split("\n"):
