@@ -7,14 +7,20 @@ class Controller():
         self.client = client
         self.partyEvent = PartyEvent.PartyEvent(client, 2)
         self.messageManager = MessageManager.MessageManager(client)
-    async def onCheckMessage(self, message, syntax):
+    async def onCheckMessage(self, message : discord.Message, syntax):
         if [x.name.lower()=="party pirat" or x.name.lower()=="moderatorer" or x.name.lower()=="grundare" or x.name.lower()=="ägare" or x.name.lower()=="admin" for x in message.author.roles]:
             try:
                 if message.content.lower().startswith(syntax + "purge"):
                     await message.channel.purge()
             except:
                 None
-
+        else:
+            return
+        try:
+            if message.content.lower().startswith(syntax + "placera "):
+                await self.partyEvent.placeUser(discord.utils.get(self.client.get_all_members(), id=message.raw_mentions[0]), int(message.content.split(" ")[2]), message.guild)
+        except:
+            None
             try:
                 if message.content.lower().startswith(syntax + "event") and len(message.raw_mentions) != 0:
                 

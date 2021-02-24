@@ -61,7 +61,10 @@ class PartyEvent():
             if "<@!" in person:
                 queue.append(person.split(" "))
         return queue
-    async def joinQueue(self, member : discord.member):
+    async def placeUser(self, user : discord.Member, position, guild : discord.Guild):
+        await self.leaveQueue(user, guild)
+        await self.joinQueue(user, pos=position)
+    async def joinQueue(self, member : discord.member, *, pos=None):
         self.initGuild(member.guild)
         queueMsg = await self.getQueueMsg()
         self.maxPlayers = await self.getMax(queueMsg)
@@ -69,12 +72,21 @@ class PartyEvent():
         msgToSend = "Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(queueArr) + 1) + "/" + str(self.maxPlayers) + ")\n"
         
         for counter, x in enumerate(queueArr):
-            msgToSend += x[0] + " " + x[1] + "\n"
+            if pos is None:
+                msgToSend += str(counter + 1) + " " + x[1] + "\n"
+            else:
+                if pos == counter + 1:
+                    msgToSend+= str(counter + 1) + " <@!" + str(member.id) + ">\n"
+                    if counter == self.maxPlayers - 1:
+                        msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
+                    counter+=1
+                    msgToSend += str(counter + 1) + " " + x[1] + "\n"
+                else:
+                    msgToSend += str(counter + 1) + " " + x[1] + "\n"
             if counter == self.maxPlayers - 1:
                 msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
-        
-        msgToSend+= str(len(queueArr) + 1) + " <@!" + str(member.id) + ">\n"
-
+        if pos is None:
+            msgToSend+= str(len(queueArr) + 1) + " <@!" + str(member.id) + ">\n"
         if len(queueArr) + 1 == self.maxPlayers:
             msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
         msgToSend+="Bot skapad av: <@240772724006453248>"
