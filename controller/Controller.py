@@ -8,7 +8,7 @@ class Controller():
         self.partyEvent = PartyEvent.PartyEvent(client, 2)
         self.messageManager = MessageManager.MessageManager(client)
     async def onCheckMessage(self, message : discord.Message, syntax):
-        if [x.name.lower()=="party pirat" or x.name.lower()=="moderatorer" or x.name.lower()=="grundare" or x.name.lower()=="ägare" or x.name.lower()=="admin" for x in message.author.roles]:
+        if [x.name.lower()=="party pirates" or x.name.lower()=="moderatorer" or x.name.lower()=="grundare" or x.name.lower()=="ägare" or x.name.lower()=="admin" for x in message.author.roles]:
             try:
                 if message.content.lower().startswith(syntax + "purge"):
                     await message.channel.purge()
@@ -21,46 +21,46 @@ class Controller():
                 await self.partyEvent.placeUser(discord.utils.get(self.client.get_all_members(), id=message.raw_mentions[0]), int(message.content.split(" ")[2]), message.guild)
         except:
             None
-            try:
-                if message.content.lower().startswith(syntax + "event") and len(message.raw_mentions) != 0:
-                
-                    self.partyEvent.setMax(int(message.content.split(" ")[1]))
-                    self.partyEvent.setLeaders(message.raw_mentions)
+        try:
+            if message.content.lower().startswith(syntax + "event") and len(message.raw_mentions) != 0:
+            
+                self.partyEvent.setMax(int(message.content.split(" ")[1]))
+                self.partyEvent.setLeaders(message.raw_mentions)
 
-                    self.partyEvent.initGuild(message.guild)
-                    await self.partyEvent.eventChannel.send("Purging...")
-                    await self.partyEvent.purgeEventChannel()
+                self.partyEvent.initGuild(message.guild)
+                await self.partyEvent.eventChannel.send("Purging...")
+                await self.partyEvent.purgeEventChannel()
 
-                    await self.partyEvent.sendInfoMessage(self.partyEvent.getNextSaturday())
+                await self.partyEvent.sendInfoMessage(self.partyEvent.getNextSaturday())
 
-                    await self.partyEvent.createQueueMessage()
+                await self.partyEvent.createQueueMessage()
 
-                    await self.partyEvent.reactToEventMessage()
+                await self.partyEvent.reactToEventMessage()
 
-                    await self.partyEvent.createAlertTask(message.guild)
-                elif "/event" in message.content.lower():
-                    await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
-            except:
+                await self.partyEvent.createAlertTask(message.guild)
+            elif "/event" in message.content.lower():
                 await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
-            try:
-                if message.content.lower().startswith("/ersätt") and len(message.content.split(" ")) > 2:
-                    msgId = int(message.content.split(" ")[1])
-                    targetMsg = await self.messageManager.getMessageById(msgId)
-                    spaceCntr = 0
-                    msg=""
-                    for z in message.content:
-                        if spaceCntr < 2:
-                            if z == ' ':
-                                spaceCntr+=1
-                        else:
-                            msg+=z
-                    await targetMsg.edit(content=msg)
-                    embed = discord.Embed()
-                    embed.add_field(name="**Meddelandet byttes ut :)**\n(raderar kommando meddelandet för att rensa upp lite)", value="[länk till meddelandet hittas här](" + targetMsg.jump_url + ")", inline=False)
-                    await message.channel.send(embed=embed)
-                    await message.delete()
-            except:
-                await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/ersätt [message id] [nytt meddelande här]`")
+        except:
+            await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/event [totalt antal] [pinga alla ledare här]`\n**Exempel:**\n/event 12 <@241255969106034688>")
+        try:
+            if message.content.lower().startswith("/ersätt") and len(message.content.split(" ")) > 2:
+                msgId = int(message.content.split(" ")[1])
+                targetMsg = await self.messageManager.getMessageById(msgId)
+                spaceCntr = 0
+                msg=""
+                for z in message.content:
+                    if spaceCntr < 2:
+                        if z == ' ':
+                            spaceCntr+=1
+                    else:
+                        msg+=z
+                await targetMsg.edit(content=msg)
+                embed = discord.Embed()
+                embed.add_field(name="**Meddelandet byttes ut :)**\n(raderar kommando meddelandet för att rensa upp lite)", value="[länk till meddelandet hittas här](" + targetMsg.jump_url + ")", inline=False)
+                await message.channel.send(embed=embed)
+                await message.delete()
+        except:
+            await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/ersätt [message id] [nytt meddelande här]`")
     async def onReactAdd(self, reaction : discord.RawReactionActionEvent):
         channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
         message = discord.message
