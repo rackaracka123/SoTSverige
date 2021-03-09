@@ -11,7 +11,7 @@ class Controller():
         if [x.name.lower()=="party pirates" or x.name.lower()=="moderatorer" or x.name.lower()=="grundare" or x.name.lower()=="ägare" or x.name.lower()=="admin" for x in message.author.roles]:
             try:
                 if message.content.lower().startswith(syntax + "purge"):
-                    await message.channel.purge()
+                    await message.channel.purge(limit=100000)
             except:
                 None
             try:
