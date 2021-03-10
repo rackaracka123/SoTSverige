@@ -1,12 +1,14 @@
 import discord
 from model import PartyEvent
 from model import MessageManager
+from model import Giveaway
 
 class Controller():
     def __init__(self, client : discord.client):
         self.client = client
         self.partyEvent = PartyEvent.PartyEvent(client, 2)
         self.messageManager = MessageManager.MessageManager(client)
+        self.giveaway = Giveaway.Giveaway(client)
     async def onCheckMessage(self, message : discord.Message, syntax):
         if [x.name.lower()=="party pirates" or x.name.lower()=="moderatorer" or x.name.lower()=="grundare" or x.name.lower()=="ägare" or x.name.lower()=="admin" for x in message.author.roles]:
             try:
@@ -70,6 +72,8 @@ class Controller():
                 message = x
         if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
             await self.partyEvent.joinQueue(reaction.member)
+        if reaction.user_id != self.client.user.id and channel.name == "giveaway":
+            await self.giveaway.handleReact(reaction, message)
     async def onReactRemove(self, reaction : discord.RawReactionActionEvent):
         channel = discord.utils.get(self.client.get_all_channels(), id=reaction.channel_id)
         message = discord.message
