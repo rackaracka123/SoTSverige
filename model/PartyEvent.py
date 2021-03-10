@@ -71,20 +71,24 @@ class PartyEvent():
         queueArr = self.messageToArray(queueMsg)
         msgToSend = "Event kö **Reagera nedan för att vara med** (Antalet personer: " + str(len(queueArr) + 1) + "/" + str(self.maxPlayers) + ")\n"
         
+        nr = 1
+        addedBanner = False
         for counter, x in enumerate(queueArr):
             if pos is None:
-                msgToSend += str(counter + 1) + " " + x[1] + "\n"
+                msgToSend += str(nr) + " " + x[1] + "\n"
             else:
-                if pos == counter + 1:
-                    msgToSend+= str(counter + 1) + " <@!" + str(member.id) + ">\n"
-                    if counter == self.maxPlayers - 1:
+                if pos == nr:
+                    msgToSend+= str(nr) + " <@!" + str(member.id) + ">\n"
+                    if nr == self.maxPlayers:
                         msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
-                    counter+=1
-                    msgToSend += str(counter + 1) + " " + x[1] + "\n"
+                        addedBanner = True
+                    nr+=1
+                    msgToSend += str(nr) + " " + x[1] + "\n"
                 else:
-                    msgToSend += str(counter + 1) + " " + x[1] + "\n"
-            if counter == self.maxPlayers - 1:
+                    msgToSend += str(nr) + " " + x[1] + "\n"
+            if nr == self.maxPlayers and not addedBanner:
                 msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
+            nr += 1
         if pos is None:
             msgToSend+= str(len(queueArr) + 1) + " <@!" + str(member.id) + ">\n"
         if len(queueArr) + 1 == self.maxPlayers:

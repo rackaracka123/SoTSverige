@@ -75,7 +75,7 @@ class Controller():
         message = discord.message
         user = await self.client.fetch_user(reaction.user_id)
 
-        for x in await channel.history(limit=2).flatten():
+        for x in await channel.history(limit=100).flatten():
             if x.id == reaction.message_id:
                 message = x
         if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
