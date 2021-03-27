@@ -170,15 +170,17 @@ class PartyEvent():
         sat = sat.replace(year=sat.date().year, month=sat.date().month, day=sat.date().day, hour=18, minute=0)
         return round((sat-a).total_seconds()/60)
     async def onJoinEventChannel(self, member):
-        embed = discord.Embed(title=":inbox_tray: Event rum")
-        embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
-        self.initGuild(member.guild)
-        await self.LoggChannel.send(embed=embed)
+        #embed = discord.Embed(title=":inbox_tray: Event rum")
+        #embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
+        #self.initGuild(member.guild)
+        #await self.LoggChannel.send(embed=embed)
+        print(member + "joined event channel, Temporarily turned off.")
     async def onLeaveEventChannel(self, member):
-        embed = discord.Embed(title=":outbox_tray: Event rum")
-        embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
-        self.initGuild(member.guild)
-        await self.LoggChannel.send(embed=embed)
+        #embed = discord.Embed(title=":outbox_tray: Event rum")
+        #embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
+        #self.initGuild(member.guild)
+        #await self.LoggChannel.send(embed=embed)
+        print(member + "joined left channel, Temporarily turned off.")
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
             return
