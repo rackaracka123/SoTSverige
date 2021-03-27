@@ -174,13 +174,13 @@ class PartyEvent():
         #embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
         #self.initGuild(member.guild)
         #await self.LoggChannel.send(embed=embed)
-        print(member + "joined event channel, Temporarily turned off.")
+        print(member.name + "joined event channel, Temporarily turned off.")
     async def onLeaveEventChannel(self, member):
         #embed = discord.Embed(title=":outbox_tray: Event rum")
         #embed.add_field(name=datetime.today().now().strftime("%Y-%m-%d, %H:%M:%S"), value="<@" + str(member.id) + ">")
         #self.initGuild(member.guild)
         #await self.LoggChannel.send(embed=embed)
-        print(member + "joined left channel, Temporarily turned off.")
+        print(member.name + "joined left channel, Temporarily turned off.")
     async def startAlertTimer(self, guild):
         if self.calculateMinutesToEvent() < 0:
             return
