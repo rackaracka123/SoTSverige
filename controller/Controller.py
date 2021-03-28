@@ -61,6 +61,18 @@ class Controller():
                     await message.delete()
             except:
                 await message.channel.send("**Fel argument i kommandot**\nSkriv så här `/ersätt [message id] [nytt meddelande här]`")
+            try:
+                if message.content.lower().startswith("/gruppera"):
+                    raw = message.content.replace("/gruppera", "").replace("<", "").replace(">", "").replace("!","").replace(" ", "")
+                    groups = raw.split(":")
+                    groupsList = []
+                    for x in groups:
+                        x = x.split("@")
+                        x.remove("")
+                        groupsList.append(x)
+                    await self.partyEvent.groupPeople(message.guild, groupsList)
+            except Exception as ex:
+                print(ex)
         else:
             return
     async def onReactAdd(self, reaction : discord.RawReactionActionEvent):

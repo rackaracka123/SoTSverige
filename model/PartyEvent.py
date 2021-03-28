@@ -10,6 +10,7 @@ class PartyEvent():
         self.maxPlayers = maxPlayers
         self.alertTask = False
     def initGuild(self, guild : discord.Guild):
+        self.guild = guild
         self.eventChannel = discord.utils.get(guild.channels, name="event-anmälan")
         self.infoChannel = discord.utils.get(guild.channels, name="event-info")
         self.templateChannel = discord.utils.get(guild.channels, name="party-pirate-template")
@@ -31,6 +32,58 @@ class PartyEvent():
         return currentDate
     def getPlatserString(self):
         return str(self.maxPlayers - len(self.leaders)) + " (" + str(self.maxPlayers) + ") *(Totalt " + str(self.maxPlayers) + " varav " + str(len(self.leaders)) + " platser reserverade för Partypirat.)*"
+    def getAllEventMembers(self):
+        return discord.utils.get(self.guild.channels, name="Event rum").members
+    def getInitEventBoatChannel(self):
+        return discord.utils.get(self.guild.channels, name="Skapa Event båt")
+    async def fillBoatsWithPremades(self, guild : discord.Guild, listOfPeople):
+        members = self.getAllEventMembers()
+        initBoatChannel = self.getInitEventBoatChannel()
+        for i, boats in enumerate(listOfPeople):
+            try:
+                parent = discord.utils.get(members, id=int(boats[0]))
+                await parent.move_to(initBoatChannel)
+                first = True
+                for m in boats:
+                    try:
+                        mem = discord.utils.get(members, id=int(m))
+                        if first:
+                            while (True):
+                                try:
+                                    await asyncio.sleep(0.2)
+                                    channels = await guild.fetch_channels()
+                                    parent = discord.utils.get(channels, name = "X #" + str(i + 1))
+                                    print("test poll " + parent.members[0].name)
+                                    break
+                                except:
+                                    print("Poll failed, trying again...")
+                            first = False
+                        await mem.move_to(parent)
+                    except Exception as e:
+                        print(e)
+            except Exception as e:
+                print(e)
+    async def fillBoats(self, guild : discord.Guild):
+        counter = 1
+        currentChannel = discord.utils.get(guild.channels, name = "X #" + str(counter))
+        for m in self.getAllEventMembers():
+            try:
+                if currentChannel is None:
+                    return
+                if len(currentChannel.members) < 4:
+                    await m.move_to(currentChannel)
+                else:
+                    counter+=1
+                    currentChannel = discord.utils.get(guild.channels, name="X #" + str(counter))
+            except:
+                print("couldnt place " + m.name)
+
+    async def groupPeople(self, guild : discord.Guild, listOfPeople):
+        self.initGuild(guild)
+        await self.fillBoatsWithPremades(guild, listOfPeople)
+        await self.fillBoats(guild)
+        return
+
     async def sendInfoMessage(self, saturday):
         saturday = format_datetime(saturday, format="EEEE d MMMM Y", locale='sv_SE')
         template = await self.getTemplate()
