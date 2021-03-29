@@ -65,16 +65,19 @@ class PartyEvent():
                 print(e)
     async def fillBoats(self, guild : discord.Guild):
         counter = 1
-        currentChannel = discord.utils.get(guild.channels, name = "X #" + str(counter))
+        currentChannel = discord.utils.get(guild.channels, name="X #" + str(counter))
+        createNewChannel = self.getInitEventBoatChannel()
         for m in self.getAllEventMembers():
             try:
                 if currentChannel is None:
-                    return
-                if len(currentChannel.members) < 4:
+                    await m.move_to(createNewChannel)
+                elif len(currentChannel.members) < 1:
                     await m.move_to(currentChannel)
                 else:
-                    counter+=1
-                    currentChannel = discord.utils.get(guild.channels, name="X #" + str(counter))
+                    await m.move_to(createNewChannel)
+                    counter += 1
+                    channels = await guild.fetch_channels()
+                    currentChannel = discord.utils.get(channels, name="X #" + str(counter))
             except:
                 print("couldnt place " + m.name)
 
