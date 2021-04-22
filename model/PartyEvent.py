@@ -144,10 +144,11 @@ class PartyEvent():
                     msgToSend += str(nr) + " " + x[1] + "\n"
             if nr == self.maxPlayers and not addedBanner:
                 msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
+                addedBanner = True
             nr += 1
         if pos is None:
             msgToSend+= str(len(queueArr) + 1) + " <@!" + str(member.id) + ">\n"
-        if len(queueArr) + 1 == self.maxPlayers:
+        if len(queueArr) + 1 == self.maxPlayers and not addedBanner:
             msgToSend+="🚧 Event anmälan är nu full 🚧\nAlla under denna rad är reserver\n"
         msgToSend+="Bot skapad av: <@240772724006453248>"
         await queueMsg.edit(content=msgToSend)
