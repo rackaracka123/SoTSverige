@@ -11,8 +11,8 @@ class PartyEvent():
         self.alertTask = False
     def initGuild(self, guild : discord.Guild):
         self.guild = guild
-        self.eventChannel = discord.utils.get(guild.channels, name="event-anmälan")
-        self.infoChannel = discord.utils.get(guild.channels, name="event-info")
+        self.eventChannel = discord.utils.get(guild.channels, name="anmälan")
+        self.infoChannel = discord.utils.get(guild.channels, name="information")
         self.templateChannel = discord.utils.get(guild.channels, name="party-pirate-template")
         self.commandCentral = discord.utils.get(guild.channels, name="kommando-central")
         self.LoggChannel = discord.utils.get(guild.channels, name="party-logg-central")

@@ -94,7 +94,7 @@ class Controller():
         for x in await channel.history(limit=100).flatten():
             if x.id == reaction.message_id:
                 message = x
-        if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
+        if reaction.user_id != self.client.user.id and channel.name == "anmälan":
             await self.partyEvent.leaveQueue(user, message.guild)
     async def onGuildAvailable(self, guild):
         await self.partyEvent.createAlertTask(guild)
