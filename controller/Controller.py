@@ -82,7 +82,7 @@ class Controller():
         for x in await channel.history(limit=100).flatten():
             if x.id == reaction.message_id:
                 message = x
-        if reaction.user_id != self.client.user.id and channel.name == "event-anmälan":
+        if reaction.user_id != self.client.user.id and channel.name == "anmälan":
             await self.partyEvent.joinQueue(reaction.member)
         if reaction.user_id != self.client.user.id and channel.name == "giveaway":
             await self.giveaway.handleReact(reaction, message)
